@@ -19,12 +19,9 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import RatingComp from "./RatingComp";
 import { Validator } from "../../../utils/heplers";
-import publicHttp from "../../../utils/publicHttp";
-import {
-  options,
-  ToastNotification,
-  ToastNotificationContainer,
-} from "../../../utils/toastConfig";
+import { options, ToastNotification } from "../../../utils/toastConfig";
+import { addDocToCollection } from "../../../firebase/addDoc";
+import { uploadImage } from "../../../firebase/uploadImage";
 
 const style = {
   position: "absolute",
@@ -153,55 +150,50 @@ function FeedbackForm({
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
 
-    // Create a new FormData object
-    const formData = new FormData();
+    // Create the data object to be sent to Firestore
+    const dataToSubmit = {
+      ...formValues.values, // Spread form values
+      createdAt: new Date().toISOString(), // Optional: add a timestamp
+    };
 
-    // Append form values to the FormData object
-    for (const [key, value] of Object.entries(formValues.values)) {
-      formData.append(key, value);
+    // Upload the profile image and get the URL
+    let profileImageUrl = await uploadImage(profileImage);
+    if (profileImageUrl) {
+      dataToSubmit.profileImage = profileImageUrl; // Add the profile image URL if available
     }
 
-    // Append the file to the FormData object if it exists
-    if (profileImage) {
-      formData.append("profileImage", profileImage);
-    }
+    // Submit data to Firestore
+    const { error, success } = await addDocToCollection(
+      "feedbacks",
+      dataToSubmit
+    );
 
-    // Perform the HTTP POST request with the FormData object
-    publicHttp
-      .post("/feedbacks", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // Set the correct Content-Type for file uploads
+    if (success) {
+      ToastNotification("success", "Feedback submitted successfully!", options);
+      // Reset form values
+      setFormValues({
+        values: {
+          guestName: "",
+          project: "",
+          message: "",
+          rating: "",
         },
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.data.status === 201) {
-          ToastNotification("success", res.data.message, options);
-          setFormValues({
-            values: {
-              guestName: "",
-              project: "",
-              message: "",
-              rating: "",
-            },
-          });
-          setProfileImage(null);
-          handleClose();
-        } else {
-          // Handle other response statuses or errors
-          ToastNotification("error", res.data.message, options);
-        }
-      })
-      .catch((err) => {
-        // Handle request errors
-        ToastNotification("error", err.message, options);
-      })
-      .finally(() => {
-        setLoading(false); // Set loading to false when done
       });
+      setProfileImage(null); // Clear the profile image
+      handleClose(); // Close any open dialog/modal if applicable
+    } else {
+      // Handle other response statuses or errors
+      ToastNotification(
+        "error",
+        error?.message || "Error submitting feedback.",
+        options
+      );
+    }
+
+    setLoading(false); // Set loading to false when done
   };
 
   return (

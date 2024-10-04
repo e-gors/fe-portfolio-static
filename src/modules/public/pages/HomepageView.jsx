@@ -25,7 +25,7 @@ import { setPage } from "../../../redux/actions/pageActions";
 import { scrollToSection } from "../../../hooks/use-scroll-to-section";
 import Feedbacks from "./Feedbacks";
 import Services from "./Services";
-import publicHttp from "../../../utils/publicHttp";
+// import publicHttp from "../../../utils/publicHttp";
 import {
   options,
   ToastNotification,
@@ -94,29 +94,34 @@ function HomepageView() {
 
   const handleSubmit = () => {
     setLoading(true);
-    publicHttp
-      .post("/contacts", contactInfo.values)
-      .then((res) => {
-        if (res.data.status === 201) {
-          ToastNotification("success", res.data.message, options);
-          setContactInfo({
-            values: {
-              name: "",
-              email: "",
-              message: "",
-            },
-          });
-        } else {
-          ToastNotification("error", res.data.message, options);
-          console.error(res.data.error);
-        }
-      })
-      .catch((err) => {
-        ToastNotification("error", err.message, options);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    console.log({
+      name: contactInfo.values.name,
+      email: contactInfo.values.email,
+      message: contactInfo.values.message,
+    });
+    // publicHttp
+    //   .post("/contacts", contactInfo.values)
+    //   .then((res) => {
+    //     if (res.data.status === 201) {
+    //       ToastNotification("success", res.data.message, options);
+    //       setContactInfo({
+    //         values: {
+    //           name: "",
+    //           email: "",
+    //           message: "",
+    //         },
+    //       });
+    //     } else {
+    //       ToastNotification("error", res.data.message, options);
+    //       console.error(res.data.error);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     ToastNotification("error", err.message, options);
+    //   })
+    //   .finally(() => {
+    //     setLoading(false);
+    //   });
   };
 
   const handleViewPage = (page) => {

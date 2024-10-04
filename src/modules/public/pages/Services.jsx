@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import ServiceCard from "../components/ServiceCard";
 import { services } from "../../../_mock/services";
-import publicHttp from "../../../utils/publicHttp";
+// import publicHttp from "../../../utils/publicHttp";
 import { isEmpty } from "../../../utils/heplers";
 import CardSkeleton from "../../../components/CardSkeleton";
 
@@ -28,29 +28,29 @@ function Services() {
   const [serviceList, setServiceList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    const controller = new AbortController();
+  // React.useEffect(() => {
+  //   const controller = new AbortController();
 
-    fetchService(controller);
-    return () => controller.abort();
-  }, []);
+  //   fetchService(controller);
+  //   return () => controller.abort();
+  // }, []);
 
-  const fetchService = (controller) => {
-    setLoading(true);
-    publicHttp
-      .get('services', { signal: controller.signal })
-      .then((res) => {
-        if (!isEmpty(res)) {
-          setServiceList(res.data.data);
-        }
-      })
-      .catch((err) => {
-        console.error(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  // const fetchService = (controller) => {
+  //   setLoading(true);
+  //   publicHttp
+  //     .get('services', { signal: controller.signal })
+  //     .then((res) => {
+  //       if (!isEmpty(res)) {
+  //         setServiceList(res.data.data);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error(err.message);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
   const servs = !isEmpty(serviceList) ? serviceList : services;
 

@@ -1,8 +1,8 @@
-// ----------------------------------------------------------------------
 
+// Define the account object
 export const account = {
   displayName: 'Efren Goron',
-  role: "Super Admin",
+  role: 'Super Admin',
   email: 'goronefren@gmail.com',
-  photoURL: '/assets/images/avatars/m_avatar_5.jpg',
+  photoURL: `${process.env.PUBLIC_URL}/assets/avatars/m_avatar_5.jpg`,
 };

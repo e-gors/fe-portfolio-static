@@ -1,14 +1,18 @@
-import Http from "../utils/Http";
+// src/firebase/firestoreUtils.js
 
-export const fetchData = async (url, params = {}) => {
+import { collection, getDocs } from "firebase/firestore"; 
+import { db } from "../firebase/firebaseConfig"; // Adjust the path as necessary
+
+export const fetchFirestoreData = async (collectionName) => {
   let data = [];
   let error = "";
 
   try {
-    const res = await Http.get(url, { params: { ...params } });
-    if (res.data) {
-      data = res.data;
-    }
+    const querySnapshot = await getDocs(collection(db, collectionName));
+    querySnapshot.forEach((doc) => {
+      // Assuming each document has an id and you want to keep the document data
+      data.push({ id: doc.id, ...doc.data() });
+    });
   } catch (err) {
     error = err.message;
   }

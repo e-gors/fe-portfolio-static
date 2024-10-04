@@ -14,8 +14,10 @@ import Nav from "./dashboard/nav";
 import { OutlinedButton } from "../components/CustomButtons";
 import { alpha } from "@mui/material/styles";
 import PropTypes from "prop-types";
-import publicHttp from "../utils/publicHttp";
-import axios from "axios";
+// Import necessary Firebase functions
+import { ref, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/firebaseConfig";
+import { options, ToastNotification } from "../utils/toastConfig";
 
 function PublicAppBar({
   publicConfig,
@@ -25,48 +27,32 @@ function PublicAppBar({
   drawerOpen,
   onDrawerOpen,
 }) {
-
   // when click, download the latest uploaded resume
-  const handleDownloadResume = () => {
-    publicHttp
-      .get("/resume/download", {
-        responseType: "blob", // Receive the file as a Blob
-      })
-      .then((res) => {
-        // Extract the filename from the content-disposition header if available
-        const disposition = res.headers["content-disposition"];
-        let fileName = "Goron, Efren - Resume.docx"; // Default filename
+  const handleDownloadResume = async () => {
+    try {
+      // Create a reference to the file in Firebase Storage
+      const fileName = "Goron, Efren - Resume (Dev).docx"; // Your file name
+      const resumeRef = ref(storage, fileName); // Use the file name directly
 
-        if (disposition) {
-          const filenameMatch = disposition.match(/filename[^;=\n]*=(.*)/);
-          if (filenameMatch && filenameMatch[1]) {
-            fileName = filenameMatch[1].replace(/['"]/g, "").trim(); // Clean up the filename
-          }
-        }
+      // Get the download URL
+      const url = await getDownloadURL(resumeRef);
 
-        // Create a new Blob from the response data
-        const url = window.URL.createObjectURL(new Blob([res.data]));
+      // Create a new link element
+      const link = document.createElement("a");
+      link.href = url; // Set the URL to the link
+      link.setAttribute("download", fileName); // Specify the filename
 
-        // Create a link element and trigger the download
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName); // Use the extracted or default filename
-        document.body.appendChild(link);
+      // Append the link to the document
+      document.body.appendChild(link);
 
-        // Triger download
-        link.click();
+      // Trigger the download
+      link.click();
 
-        // Cleanup: Remove the link and revoke the Object URL
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((err) => {
-        console.error("Error downloading the resume:", err);
-        // Display a user-friendly error message here
-        alert(
-          "There was an error downloading the resume. Please try again later."
-        );
-      });
+      // Cleanup: Remove the link after download
+      document.body.removeChild(link);
+    } catch (err) {
+      ToastNotification("error", err, options);
+    }
   };
 
   return (

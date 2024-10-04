@@ -7,7 +7,7 @@ import {
 } from "../../../components/CustomButtons";
 import { feedbacks } from "../../../_mock/feedbacks";
 import FeedbackCard from "../components/FeedbackCard";
-import publicHttp from "../../../utils/publicHttp";
+// import publicHttp from "../../../utils/publicHttp";
 import { isEmpty } from "../../../utils/heplers";
 import CardSkeleton from "../../../components/CardSkeleton";
 import { useDispatch } from "react-redux";
@@ -43,32 +43,32 @@ function Feedbacks() {
   const [feedbackList, setFeedbackList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    const controller = new AbortController();
+  // React.useEffect(() => {
+  //   const controller = new AbortController();
 
-    fetchFeedbacks(controller);
+  //   fetchFeedbacks(controller);
 
-    return () => controller.abort();
-  }, []);
+  //   return () => controller.abort();
+  // }, []);
 
-  const fetchFeedbacks = (controller) => {
-    setLoading(true);
-    publicHttp
-      .get("/feedbacks?status=approved", { signal: controller.signal })
-      .then((res) => {
-        if (!isEmpty(res)) {
-          setFeedbackList(res.data.data);
-          dispatch(setTotalReviuews(res.data?.data[0]?.reviews));
-          dispatch(setRates(res.data?.data[0]?.rates));
-        }
-      })
-      .catch((err) => {
-        console.error(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  // const fetchFeedbacks = (controller) => {
+  //   setLoading(true);
+  //   publicHttp
+  //     .get("/feedbacks?status=approved", { signal: controller.signal })
+  //     .then((res) => {
+  //       if (!isEmpty(res)) {
+  //         setFeedbackList(res.data.data);
+  //         dispatch(setTotalReviuews(res.data?.data[0]?.reviews));
+  //         dispatch(setRates(res.data?.data[0]?.rates));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error(err.message);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
   const feeds = !isEmpty(feedbackList) ? feedbackList : feedbacks;
 

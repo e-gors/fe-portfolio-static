@@ -3,7 +3,7 @@ import React from "react";
 import ProjectCard from "../components/ProjectCard";
 import { projects } from "../../../_mock/projects";
 import { isEmpty } from "../../../utils/heplers";
-import publicHttp from "../../../utils/publicHttp";
+// import publicHttp from "../../../utils/publicHttp";
 import CardSkeleton from "../../../components/CardSkeleton";
 import { useDispatch } from "react-redux";
 import { setLocalPercent, setTotalProjects, setWorldwidePercent } from "../../../redux/actions/totalsActions";
@@ -34,30 +34,30 @@ function Projects() {
   const [projectList, setProjectList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    const controller = new AbortController();
+  // React.useEffect(() => {
+  //   const controller = new AbortController();
 
-    fetchData(controller);
-    return () => controller.abort();
-  }, []);
+  //   fetchData(controller);
+  //   return () => controller.abort();
+  // }, []);
 
-  const fetchData = (controller) => {
-    setLoading(true);
-    publicHttp
-      .get("projects", { signal: controller.signal })
-      .then((res) => {
-        setProjectList(res.data.data);
-        dispatch(setTotalProjects(res.data?.data[0]?.totalProjects));
-        dispatch(setLocalPercent(res.data?.data[0]?.local));
-        dispatch(setWorldwidePercent(res.data?.data[0]?.worldwide));
-      })
-      .catch((err) => {
-        console.error(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  // const fetchData = (controller) => {
+  //   setLoading(true);
+  //   publicHttp
+  //     .get("projects", { signal: controller.signal })
+  //     .then((res) => {
+  //       setProjectList(res.data.data);
+  //       dispatch(setTotalProjects(res.data?.data[0]?.totalProjects));
+  //       dispatch(setLocalPercent(res.data?.data[0]?.local));
+  //       dispatch(setWorldwidePercent(res.data?.data[0]?.worldwide));
+  //     })
+  //     .catch((err) => {
+  //       console.error(err.message);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
   const projs = !isEmpty(projectList) ? projectList : projects;
 
